@@ -25,12 +25,11 @@ type GameDetailPageProps = {
 
 export default function GameDetailPage({ params }: GameDetailPageProps) {
   const firestore = useFirestore();
-  const { id } = params;
 
   const gameRef = useMemoFirebase(() => {
-    if (!firestore || !id) return null;
-    return doc(firestore, 'games', id);
-  }, [firestore, id]);
+    if (!firestore || !params.id) return null;
+    return doc(firestore, 'games', params.id);
+  }, [firestore, params.id]);
 
   const { data: game, isLoading } = useDoc<Game>(gameRef);
 
