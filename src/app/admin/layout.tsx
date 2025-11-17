@@ -7,7 +7,7 @@ import {
   LayoutDashboard
 } from "lucide-react"
 import { useDoc, useFirestore, useUser, useMemoFirebase } from "@/firebase"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { doc } from "firebase/firestore"
 
@@ -26,6 +26,7 @@ export default function AdminLayout({
   const router = useRouter();
   const firestore = useFirestore();
   const pathname = usePathname();
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
   const adminRoleRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -36,17 +37,18 @@ export default function AdminLayout({
   
   useEffect(() => {
     const isCheckingAuth = isUserLoading || isAdminRoleLoading;
-    if (!isCheckingAuth) {
-      if (!user) {
-        router.replace('/login');
-      } else if (adminRole === null) {
-        // User is logged in but not an admin, redirect to home
-        router.replace('/');
-      }
+    if (isCheckingAuth) {
+      return; // Do nothing until all loading is complete
     }
-  }, [user, isUserLoading, adminRole, isAdminRoleLoading, router]);
 
-  const isAuthorized = !isUserLoading && !isAdminRoleLoading && !!user && !!adminRole;
+    if (user && adminRole) {
+      setIsAuthorized(true);
+    } else {
+      // If not logged in or not an admin, redirect
+      router.replace('/');
+    }
+  }, [user, adminRole, isUserLoading, isAdminRoleLoading, router]);
+
 
   if (!isAuthorized) {
     return (
