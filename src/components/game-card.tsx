@@ -13,7 +13,7 @@ interface GameCardProps {
 export function GameCard({ game }: GameCardProps) {
   return (
     <Link href={`/games/${game.id}`} className="group block">
-      <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:shadow-accent/20 group-hover:border-accent/50 group-hover:-translate-y-1">
+      <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:border-primary/50 group-hover:-translate-y-1 bg-card/50 hover:bg-card">
         <CardHeader className="p-0">
           <div className="relative aspect-[4/5] w-full">
             <Image
@@ -34,17 +34,17 @@ export function GameCard({ game }: GameCardProps) {
             <Badge variant="secondary">{game.genre}</Badge>
             <Badge
               className={cn(
-                game.difficulty === 'Easy' && 'bg-green-200 text-green-900',
-                game.difficulty === 'Medium' && 'bg-yellow-200 text-yellow-900',
-                game.difficulty === 'Hard' && 'bg-red-200 text-red-900',
-                game.difficulty === 'Expert' && 'bg-purple-200 text-purple-900',
-                'dark:bg-opacity-20'
+                'border-transparent',
+                game.difficulty === 'Easy' && 'bg-green-600/20 text-green-300 border-green-500/30',
+                game.difficulty === 'Medium' && 'bg-yellow-600/20 text-yellow-300 border-yellow-500/30',
+                game.difficulty === 'Hard' && 'bg-red-600/20 text-red-300 border-red-500/30',
+                game.difficulty === 'Expert' && 'bg-purple-600/20 text-purple-300 border-purple-500/30'
               )}
             >
               {game.difficulty}
             </Badge>
           </div>
-           <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent" />
+           <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:text-primary" />
         </CardFooter>
       </Card>
     </Link>

@@ -31,7 +31,7 @@ export default function BlogPage() {
         {isLoading && Array.from({ length: 3 }).map((_, i) => <PostCardSkeleton key={i} />)}
         {posts?.map((post) => (
           <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
-            <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:shadow-accent/20 group-hover:border-accent/50 group-hover:-translate-y-1">
+            <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:border-primary/50 group-hover:-translate-y-1 bg-card/50 hover:bg-card">
               <CardHeader className="p-0">
                 <div className="relative aspect-video w-full">
                   <Image
@@ -62,7 +62,7 @@ export default function BlogPage() {
 }
 
 const PostCardSkeleton = () => (
-  <Card className="h-full flex flex-col">
+  <Card className="h-full flex flex-col bg-card/50">
     <CardHeader className="p-0">
       <Skeleton className="aspect-video w-full rounded-t-lg" />
     </CardHeader>

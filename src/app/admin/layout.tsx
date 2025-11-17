@@ -45,7 +45,7 @@ export default function AdminLayout({
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold font-headline">
-              <Gamepad2 className="h-6 w-6 text-accent" style={{filter: 'drop-shadow(0 0 5px hsl(var(--accent)))'}} />
+              <Gamepad2 className="h-6 w-6 text-primary" style={{filter: 'drop-shadow(0 0 5px hsl(var(--primary)))'}} />
               <span className="">Tech And Gaming</span>
             </Link>
           </div>
@@ -67,7 +67,7 @@ export default function AdminLayout({
       </div>
       <div className="flex flex-col">
         {/* Mobile header would go here */}
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-secondary/40">
+        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 bg-background">
           {children}
         </main>
       </div>

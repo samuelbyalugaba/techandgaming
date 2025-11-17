@@ -47,19 +47,19 @@ export default function Home() {
         )}
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 p-4">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight" style={{textShadow: '0 0 20px hsl(var(--accent))'}}>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-headline tracking-tighter leading-tight" style={{textShadow: '0 0 20px hsl(var(--primary))'}}>
             The Future of Gaming is Here
           </h1>
           <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/80">
             Explore cutting-edge games, discover the latest tech news, and join a community of innovators.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20 transition-shadow hover:shadow-accent/40">
+            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-shadow hover:shadow-primary/40">
               <Link href="/games">
                 Browse Games <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="text-white border-white/50 hover:bg-white/10 hover:text-white">
+            <Button asChild size="lg" variant="outline" className="text-white border-white/50 bg-white/5 hover:bg-white/10 hover:text-white backdrop-blur-sm">
               <Link href="/blog">
                 Latest News
               </Link>

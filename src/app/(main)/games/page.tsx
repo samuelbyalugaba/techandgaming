@@ -55,7 +55,7 @@ export default function GamesPage() {
         </p>
       </div>
 
-      <div className="mt-8 md:mt-12 p-4 border rounded-lg bg-card sticky top-14 z-40 backdrop-blur-sm bg-background/80">
+      <div className="mt-8 md:mt-12 p-4 border rounded-lg bg-card/80 sticky top-14 z-40 backdrop-blur-sm bg-background/80">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -132,7 +132,7 @@ export default function GamesPage() {
 }
 
 const CardSkeleton = () => (
-  <div className="h-full flex flex-col rounded-lg border bg-card shadow-sm">
+  <div className="h-full flex flex-col rounded-lg border bg-card/50 shadow-sm">
     <div className="relative aspect-[4/5] w-full bg-muted animate-pulse rounded-t-lg"></div>
     <div className="flex-grow p-4">
       <div className="h-6 w-3/4 bg-muted animate-pulse rounded"></div>

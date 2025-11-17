@@ -32,7 +32,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
 
   if (isLoading) {
       return (
-          <Card>
+          <Card className="bg-card/50">
               <CardHeader>
                   <CardTitle className="flex items-center gap-2 font-headline">
                       <Crown className="h-6 w-6 text-yellow-500" />
@@ -60,7 +60,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
   }
 
   return (
-    <Card>
+    <Card className="bg-card/50">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-headline">
           <Crown className="h-6 w-6 text-yellow-500" />

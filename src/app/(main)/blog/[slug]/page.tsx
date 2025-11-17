@@ -85,7 +85,7 @@ export default function PostPage({ params }: PostPageProps) {
       </div>
       
       <div className="container max-w-3xl mx-auto -mt-24 relative z-10 pb-16 md:pb-24">
-        <div className="bg-card p-8 md:p-12 rounded-lg shadow-xl">
+        <div className="bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-lg border border-white/10 shadow-xl">
           <h1 className="text-3xl md:text-5xl font-bold font-headline text-center">
             {post.title}
           </h1>
@@ -101,7 +101,7 @@ export default function PostPage({ params }: PostPageProps) {
           </div>
         </div>
 
-        <div className="mt-8 prose prose-lg dark:prose-invert max-w-none">
+        <div className="mt-8 prose prose-lg prose-invert max-w-none">
           {renderContent(post.content)}
         </div>
       </div>
@@ -113,7 +113,7 @@ const PostSkeleton = () => (
   <article>
     <Skeleton className="relative w-full h-[40vh]" />
     <div className="container max-w-3xl mx-auto -mt-24 relative z-10 pb-16 md:pb-24">
-      <div className="bg-card p-8 md:p-12 rounded-lg shadow-xl">
+      <div className="bg-card/80 backdrop-blur-sm p-8 md:p-12 rounded-lg border border-white/10 shadow-xl">
         <Skeleton className="h-10 w-3/4 mx-auto" />
         <div className="flex justify-center items-center gap-6 mt-6">
           <Skeleton className="h-5 w-24" />

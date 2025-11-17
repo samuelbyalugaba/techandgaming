@@ -40,7 +40,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
   }
 
   return (
-    <div className="bg-secondary">
+    <div className="bg-secondary/20">
       {/* Hero Section */}
       <section className="relative h-[50vh] flex items-end text-white p-8">
         <Image
@@ -70,7 +70,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Play Button */}
-          <Button size="lg" className="w-full h-16 text-xl bg-accent text-accent-foreground hover:bg-accent/90 shadow-lg shadow-accent/20 transition-all hover:scale-105">
+          <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105">
             <a href="#" className="flex items-center justify-center w-full h-full">
               <PlayCircle className="mr-3 h-8 w-8" />
               Play Now
@@ -132,7 +132,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
             <ul className="space-y-3">
               {game.mechanics.map((mech) => (
                 <li key={mech} className="flex items-start gap-3">
-                  <ShieldCheck className="h-5 w-5 mt-0.5 text-accent flex-shrink-0" />
+                  <ShieldCheck className="h-5 w-5 mt-0.5 text-primary flex-shrink-0" />
                   <span className="text-muted-foreground">{mech}</span>
                 </li>
               ))}
@@ -148,7 +148,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
 }
 
 const GameDetailSkeleton = () => (
-  <div className="bg-secondary">
+  <div className="bg-secondary/20">
     <section className="relative h-[50vh] bg-muted animate-pulse p-8">
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
     </section>
