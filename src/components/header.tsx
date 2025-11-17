@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Gamepad2, Menu, LogOut, User as UserIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth, useUser } from "@/firebase";
+import { useAuth, useDoc, useFirestore, useUser, useMemoFirebase } from "@/firebase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,6 +21,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { doc } from "firebase/firestore";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -33,6 +34,15 @@ export function Header() {
   const auth = useAuth();
   const router = useRouter();
   const { user } = useUser();
+  const firestore = useFirestore();
+
+  const adminRoleRef = useMemoFirebase(() => {
+    if (!firestore || !user) return null;
+    return doc(firestore, 'roles_admin', user.uid);
+  }, [firestore, user]);
+
+  const { data: adminRole } = useDoc(adminRoleRef);
+  const isAdmin = adminRole !== null;
 
   const handleSignOut = () => {
     if (auth) {
@@ -95,7 +105,7 @@ export function Header() {
                     Tech And Gaming
                   </span>
                 </Link>
-                {[...navLinks, {href: "/admin", label: "Admin"}].map((link) => (
+                {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
@@ -109,6 +119,19 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
+                {isAdmin && (
+                  <Link
+                    href="/admin"
+                    className={cn(
+                      "text-lg font-medium transition-colors hover:text-foreground/80",
+                      pathname.startsWith('/admin')
+                        ? "text-foreground"
+                        : "text-foreground/60"
+                    )}
+                  >
+                    Admin
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>
@@ -129,7 +152,7 @@ export function Header() {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem asChild><Link href="/admin">Admin Panel</Link></DropdownMenuItem>
+                    {isAdmin && <DropdownMenuItem asChild><Link href="/admin">Admin Panel</Link></DropdownMenuItem>}
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out

@@ -7,6 +7,7 @@
  * All top-level collections (`games`, `blogPosts`, `tags`, `leaderboards`)
  * are secured to allow read access to everyone, but write access is restricted
  * to admin users only. Admin status is determined by the existence of a
+
  * document in the `/roles_admin/{userId}` collection.
  *
  * Data Structure:
@@ -51,7 +52,7 @@ service cloud.firestore {
     }
 
     /**
-     * @description Checks if the user is an admin.
+     * @description Checks if the user is the owner of a document.
      * @param {string} userId - The user ID to check.
      * @return {bool} True if the user ID matches the request's auth UID.
      */
