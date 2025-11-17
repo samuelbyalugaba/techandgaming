@@ -49,12 +49,12 @@ export default function AdminLayout({
         setIsAuthorized(true);
       }
     }
-  }, [user, isUserLoading, adminRole, isAdminRoleLoading, router, isAuthorized]);
+  }, [user, isUserLoading, adminRole, isAdminRoleLoading, router]);
 
   if (isUserLoading || isAdminRoleLoading || !isAuthorized) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <p>Loading...</p>
+        <p>Checking permissions...</p>
       </div>
     );
   }
