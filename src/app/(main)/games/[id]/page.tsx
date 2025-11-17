@@ -39,25 +39,27 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
   }
 
   if (!game) {
-    return notFound();
+    notFound();
   }
 
   return (
     <div className="bg-secondary/20">
       {/* Hero Section */}
       <section className="relative h-[50vh] flex items-end text-white p-8">
-        <Image
-          src={game.coverImage.url}
-          alt={game.coverImage.alt}
-          fill
-          className="object-cover"
-          data-ai-hint={game.coverImage.hint}
-          priority
-        />
+        {game.coverImage?.url && (
+          <Image
+            src={game.coverImage.url}
+            alt={game.coverImage.alt || game.title || 'Game cover image'}
+            fill
+            className="object-cover"
+            data-ai-hint={game.coverImage.hint}
+            priority
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
         <div className="relative z-10 container max-w-screen-2xl">
           <div className="flex flex-wrap gap-2">
-            {game.tags.map((tag) => (
+            {game.tags?.map((tag) => (
               <Badge key={tag} variant="outline" className="text-white border-white/50 bg-black/20 backdrop-blur-sm">
                 {tag}
               </Badge>
@@ -73,76 +75,86 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Play Button */}
-          <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
-            <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105">
-                <PlayCircle className="mr-3 h-8 w-8" />
-                Play Now
-            </Button>
-          </a>
+          {game.playUrl && (
+            <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+              <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                  <PlayCircle className="mr-3 h-8 w-8" />
+                  Play Now
+              </Button>
+            </a>
+          )}
 
           {/* Description */}
-          <div>
-            <h2 className="text-2xl font-bold font-headline">About the Game</h2>
-            <p className="mt-4 text-muted-foreground leading-relaxed">{game.longDescription}</p>
-          </div>
+          {game.longDescription && (
+            <div>
+              <h2 className="text-2xl font-bold font-headline">About the Game</h2>
+              <p className="mt-4 text-muted-foreground leading-relaxed">{game.longDescription}</p>
+            </div>
+          )}
 
           {/* Trailer */}
-          <div>
-            <h2 className="text-2xl font-bold font-headline">Trailer</h2>
-            <div className="mt-4 aspect-video rounded-lg overflow-hidden border">
-              <iframe
-                width="100%"
-                height="100%"
-                src={game.trailerUrl}
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+          {game.trailerUrl && (
+            <div>
+              <h2 className="text-2xl font-bold font-headline">Trailer</h2>
+              <div className="mt-4 aspect-video rounded-lg overflow-hidden border">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={game.trailerUrl}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Screenshots */}
-          <div>
-            <h2 className="text-2xl font-bold font-headline">Screenshots</h2>
-            <Carousel className="w-full mt-4">
-              <CarouselContent>
-                {game.screenshots.map((ss, index) => (
-                  <CarouselItem key={index}>
-                    <div className="relative aspect-video rounded-lg overflow-hidden border">
-                      <Image
-                        src={ss.url}
-                        alt={ss.alt}
-                        fill
-                        className="object-cover"
-                        data-ai-hint={ss.hint}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="left-4" />
-              <CarouselNext className="right-4" />
-            </Carousel>
-          </div>
+          {game.screenshots && game.screenshots.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold font-headline">Screenshots</h2>
+              <Carousel className="w-full mt-4">
+                <CarouselContent>
+                  {game.screenshots.map((ss, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative aspect-video rounded-lg overflow-hidden border">
+                        <Image
+                          src={ss.url}
+                          alt={ss.alt || `Screenshot ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          data-ai-hint={ss.hint}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-4" />
+                <CarouselNext className="right-4" />
+              </Carousel>
+            </div>
+          )}
         </div>
 
         {/* Sidebar */}
         <aside className="space-y-8">
           {/* Game Mechanics */}
-          <div>
-            <h2 className="text-2xl font-bold font-headline mb-4">Mechanics</h2>
-            <ul className="space-y-3">
-              {game.mechanics.map((mech) => (
-                <li key={mech} className="flex items-start gap-3">
-                  <ShieldCheck className="h-5 w-5 mt-0.5 text-primary flex-shrink-0" />
-                  <span className="text-muted-foreground">{mech}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {game.mechanics && game.mechanics.length > 0 && (
+            <div>
+              <h2 className="text-2xl font-bold font-headline mb-4">Mechanics</h2>
+              <ul className="space-y-3">
+                {game.mechanics.map((mech) => (
+                  <li key={mech} className="flex items-start gap-3">
+                    <ShieldCheck className="h-5 w-5 mt-0.5 text-primary flex-shrink-0" />
+                    <span className="text-muted-foreground">{mech}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           
-          <Leaderboard gameId={game.id} />
+          {game.id && <Leaderboard gameId={game.id} />}
 
         </aside>
       </div>
