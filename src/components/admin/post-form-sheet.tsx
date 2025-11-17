@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Post } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useId } from "react";
 
 interface PostFormSheetProps {
   open: boolean;
@@ -26,6 +26,7 @@ interface PostFormSheetProps {
 
 export function PostFormSheet({ open, onOpenChange, post, onSave }: PostFormSheetProps) {
     const [formData, setFormData] = useState<Partial<Post>>({});
+    const descriptionId = useId();
 
     useEffect(() => {
         if (post) {
@@ -52,11 +53,11 @@ export function PostFormSheet({ open, onOpenChange, post, onSave }: PostFormShee
   
     return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-xl">
+      <SheetContent className="sm:max-w-xl" aria-describedby={descriptionId}>
         <form onSubmit={handleSubmit}>
           <SheetHeader>
             <SheetTitle>{post ? 'Edit Post' : 'Add a New Post'}</SheetTitle>
-            <SheetDescription>
+            <SheetDescription id={descriptionId}>
               {post ? 'Edit this blog post.' : 'Write your new blog post here.'} Markdown is supported.
             </SheetDescription>
           </SheetHeader>

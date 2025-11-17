@@ -65,6 +65,7 @@ export default function LoginPage() {
           fill
           className="object-cover"
           data-ai-hint="abstract background"
+          priority
         />
         <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
         <Card className="w-full max-w-sm z-10 bg-card/60 border-white/20">

@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Game } from "@/lib/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useId } from "react";
 
 interface GameFormSheetProps {
   open: boolean;
@@ -27,6 +27,7 @@ interface GameFormSheetProps {
 
 export function GameFormSheet({ open, onOpenChange, game, onSave }: GameFormSheetProps) {
   const [formData, setFormData] = useState<Partial<Game>>({});
+  const descriptionId = useId();
 
   useEffect(() => {
     if (game) {
@@ -66,11 +67,11 @@ export function GameFormSheet({ open, onOpenChange, game, onSave }: GameFormShee
   
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="sm:max-w-2xl w-full">
+      <SheetContent className="sm:max-w-2xl w-full" aria-describedby={descriptionId}>
         <form onSubmit={handleSubmit}>
           <SheetHeader>
             <SheetTitle>{game ? 'Edit Game' : 'Add a New Game'}</SheetTitle>
-            <SheetDescription>
+            <SheetDescription id={descriptionId}>
               {game ? 'Edit the details for this game.' : 'Fill in the details for the new game.'} Click save when you're done.
             </SheetDescription>
           </SheetHeader>

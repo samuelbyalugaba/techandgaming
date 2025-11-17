@@ -16,11 +16,12 @@ type PostPageProps = {
 
 export default function PostPage({ params }: PostPageProps) {
   const firestore = useFirestore();
+  const { slug } = params;
 
   const postQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'blogPosts'), where('slug', '==', params.slug), limit(1));
-  }, [firestore, params.slug]);
+    return query(collection(firestore, 'blogPosts'), where('slug', '==', slug), limit(1));
+  }, [firestore, slug]);
 
   const { data: posts, isLoading } = useCollection<Post>(postQuery);
   const post = posts?.[0];
