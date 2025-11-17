@@ -16,7 +16,6 @@ import { Leaderboard } from '@/components/leaderboard';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Game } from '@/lib/types';
-import Link from 'next/link';
 
 type GameDetailPageProps = {
   params: {
@@ -26,11 +25,12 @@ type GameDetailPageProps = {
 
 export default function GameDetailPage({ params }: GameDetailPageProps) {
   const firestore = useFirestore();
+  const { id } = params;
 
   const gameRef = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
-    return doc(firestore, 'games', params.id);
-  }, [firestore, params.id]);
+    if (!firestore || !id) return null;
+    return doc(firestore, 'games', id);
+  }, [firestore, id]);
 
   const { data: game, isLoading } = useDoc<Game>(gameRef);
 
