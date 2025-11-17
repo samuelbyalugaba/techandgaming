@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Game } from '@/lib/types';
@@ -12,7 +13,7 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   return (
-    <Link href={`/games/${game.id}`} className="group block" target="_blank" rel="noopener noreferrer">
+    <Link href={`/games/${game.id}`} className="group block">
       <Card className="h-full flex flex-col transition-all duration-300 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:border-primary/50 group-hover:-translate-y-1 bg-card/50 hover:bg-card">
         <CardHeader className="p-0">
           <div className="relative aspect-[4/5] w-full">
