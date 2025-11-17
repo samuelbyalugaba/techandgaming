@@ -39,6 +39,7 @@ export function GameFormSheet({ open, onOpenChange, game, onSave }: GameFormShee
         genre: 'Sci-Fi',
         difficulty: 'Medium',
         trailerUrl: '',
+        subdomain: '',
         mechanics: [],
         tags: [],
       });
@@ -77,6 +78,10 @@ export function GameFormSheet({ open, onOpenChange, game, onSave }: GameFormShee
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="title" className="text-right">Title</Label>
               <Input name="title" id="title" value={formData.title || ''} onChange={handleChange} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="subdomain" className="text-right">Subdomain</Label>
+              <Input name="subdomain" id="subdomain" value={formData.subdomain || ''} onChange={handleChange} className="col-span-3" placeholder="e.g., cosmic-rift" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="description" className="text-right">Description</Label>
