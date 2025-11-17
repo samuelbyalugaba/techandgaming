@@ -6,10 +6,9 @@ import {
   Newspaper,
   LayoutDashboard
 } from "lucide-react"
-import { useDoc, useFirestore, useUser, useMemoFirebase } from "@/firebase"
-import { useEffect, useState } from "react"
+import { useUser } from "@/firebase"
+import { useEffect } from "react"
 import { cn } from "@/lib/utils"
-import { doc } from "firebase/firestore"
 
 const navItems = [
     { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
@@ -24,36 +23,18 @@ export default function AdminLayout({
 }) {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
-  const firestore = useFirestore();
   const pathname = usePathname();
-  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  const adminRoleRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'roles_admin', user.uid);
-  }, [firestore, user]);
-
-  const { data: adminRole, isLoading: isAdminRoleLoading } = useDoc(adminRoleRef);
-  
   useEffect(() => {
-    const isCheckingAuth = isUserLoading || isAdminRoleLoading;
-    if (isCheckingAuth) {
-      return; // Do nothing until all loading is complete
+    if (!isUserLoading && !user) {
+      router.replace('/login');
     }
+  }, [user, isUserLoading, router]);
 
-    if (user && adminRole) {
-      setIsAuthorized(true);
-    } else {
-      // If not logged in or not an admin, redirect
-      router.replace('/');
-    }
-  }, [user, adminRole, isUserLoading, isAdminRoleLoading, router]);
-
-
-  if (!isAuthorized) {
+  if (isUserLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <p>Checking permissions...</p>
+        <p>Loading...</p>
       </div>
     );
   }
