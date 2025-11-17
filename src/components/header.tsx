@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Gamepad2, Menu, LogOut, User as UserIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth, useDoc, useFirestore, useUser, useMemoFirebase } from "@/firebase";
+import { useAuth, useUser } from "@/firebase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +21,6 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { doc } from "firebase/firestore";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -34,16 +33,6 @@ export function Header() {
   const auth = useAuth();
   const router = useRouter();
   const { user } = useUser();
-  const firestore = useFirestore();
-
-  // This logic is kept in case you want to re-implement RBAC later.
-  const adminRoleRef = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    return doc(firestore, 'roles_admin', user.uid);
-  }, [firestore, user]);
-
-  const { data: adminRole } = useDoc(adminRoleRef);
-  const isAdmin = adminRole !== null;
 
   const handleSignOut = () => {
     if (auth) {
@@ -120,17 +109,17 @@ export function Header() {
                     {link.label}
                   </Link>
                 ))}
-                {isAdmin && (
+                {user && (
                   <Link
-                    href="/management"
+                    href="/admin"
                     className={cn(
                       "text-lg font-medium transition-colors hover:text-foreground/80",
-                      pathname.startsWith('/management')
+                      pathname.startsWith('/admin')
                         ? "text-foreground"
                         : "text-foreground/60"
                     )}
                   >
-                    Management
+                    Admin
                   </Link>
                 )}
               </div>
@@ -153,7 +142,7 @@ export function Header() {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {isAdmin && <DropdownMenuItem asChild><Link href="/management">Management</Link></DropdownMenuItem>}
+                    {user && <DropdownMenuItem asChild><Link href="/admin">Admin</Link></DropdownMenuItem>}
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out
