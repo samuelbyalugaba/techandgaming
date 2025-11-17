@@ -49,7 +49,7 @@ export default function AdminLayout({
         setIsAuthorized(true);
       }
     }
-  }, [user, isUserLoading, adminRole, isAdminRoleLoading, router]);
+  }, [user, isUserLoading, adminRole, isAdminRoleLoading, router, isAuthorized]);
 
   if (isUserLoading || isAdminRoleLoading || !isAuthorized) {
     return (
