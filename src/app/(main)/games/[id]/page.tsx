@@ -15,6 +15,7 @@ import { Leaderboard } from '@/components/leaderboard';
 import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
 import { doc } from 'firebase/firestore';
 import { Game } from '@/lib/types';
+import Link from 'next/link';
 
 type GameDetailPageProps = {
   params: {
@@ -24,10 +25,12 @@ type GameDetailPageProps = {
 
 export default function GameDetailPage({ params }: GameDetailPageProps) {
   const firestore = useFirestore();
+  const { id } = params;
+
   const gameRef = useMemoFirebase(() => {
-    if (!firestore || !params.id) return null;
-    return doc(firestore, 'games', params.id);
-  }, [firestore, params.id]);
+    if (!firestore || !id) return null;
+    return doc(firestore, 'games', id);
+  }, [firestore, id]);
 
   const { data: game, isLoading } = useDoc<Game>(gameRef);
 
@@ -70,11 +73,11 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Play Button */}
-          <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105">
-            <a href="#" className="flex items-center justify-center w-full h-full">
+          <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105" asChild>
+            <Link href={`/play/${game.subdomain}`} className="flex items-center justify-center w-full h-full">
               <PlayCircle className="mr-3 h-8 w-8" />
               Play Now
-            </a>
+            </Link>
           </Button>
 
           {/* Description */}
