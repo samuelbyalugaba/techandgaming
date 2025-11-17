@@ -11,8 +11,9 @@ import { Gamepad2, Newspaper, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useCollection, useFirestore, useMemoFirebase } from "@/firebase"
-import { collection } from "firebase/firestore"
+import { collection, query, orderBy, limit } from "firebase/firestore"
 import { Game, Post } from "@/lib/types"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export default function AdminDashboard() {
   const firestore = useFirestore();
@@ -22,6 +23,12 @@ export default function AdminDashboard() {
 
   const postsCollection = useMemoFirebase(() => firestore ? collection(firestore, 'blogPosts') : null, [firestore]);
   const { data: posts } = useCollection<Post>(postsCollection);
+  
+  const recentGamesQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'games'), orderBy('title', 'desc'), limit(5)) : null, [firestore]);
+  const { data: recentGames } = useCollection<Game>(recentGamesQuery);
+
+  const recentPostsQuery = useMemoFirebase(() => firestore ? query(collection(firestore, 'blogPosts'), orderBy('date', 'desc'), limit(5)) : null, [firestore]);
+  const { data: recentPosts } = useCollection<Post>(recentPostsQuery);
 
   const totalGames = games?.length ?? 0;
   const totalPosts = posts?.length ?? 0;
@@ -68,15 +75,56 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      <Card className="mt-8">
-        <CardHeader>
-            <CardTitle>Welcome to the CMS</CardTitle>
-            <CardDescription>Use the navigation on the left to add, edit, or delete games and blog posts.</CardDescription>
-        </CardHeader>
-        <CardContent>
-            <p>This dashboard is a simplified Content Management System (CMS) for the Tech And Gaming website. Data is now connected to a live Firestore database. All changes made here will persist.</p>
-        </CardContent>
-      </Card>
+      <div className="grid gap-8 md:grid-cols-2 mt-8">
+        <Card>
+          <CardHeader>
+              <CardTitle>Recent Games</CardTitle>
+              <CardDescription>The last 5 games added.</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Genre</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentGames?.map(game => (
+                    <TableRow key={game.id}>
+                      <TableCell>{game.title}</TableCell>
+                      <TableCell>{game.genre}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+              <CardTitle>Recent Blog Posts</CardTitle>
+              <CardDescription>The last 5 posts published.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentPosts?.map(post => (
+                    <TableRow key={post.id}>
+                      <TableCell>{post.title}</TableCell>
+                      <TableCell> {post.date && new Date((post.date as any).seconds * 1000).toLocaleDateString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

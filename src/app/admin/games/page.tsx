@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,19 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetFooter,
-  SheetClose
-} from "@/components/ui/sheet"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { PlusCircle, MoreHorizontal } from "lucide-react"
@@ -32,88 +20,77 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
-import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking, updateDocumentNonBlocking } from "@/firebase";
+import { collection, doc } from "firebase/firestore";
 import { Game } from "@/lib/types";
-import React from "react";
+import { GameFormSheet } from "@/components/admin/game-form-sheet";
 
 export default function AdminGamesPage() {
     const firestore = useFirestore();
     const gamesCollection = useMemoFirebase(() => firestore ? collection(firestore, 'games') : null, [firestore]);
     const { data: games } = useCollection<Game>(gamesCollection);
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const formData = new FormData(form);
-    const newGame = Object.fromEntries(formData.entries());
-    if (gamesCollection) {
-        // This is a simplified version. In a real app, you'd have better data handling and validation.
-        addDocumentNonBlocking(gamesCollection, {
-            ...newGame,
-            tags: [],
-            screenshots: [],
-            mechanics: [],
-            coverImage: { url: '', alt: '', hint: ''}
-        });
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const [editingGame, setEditingGame] = useState<Game | null>(null);
+
+    const handleAdd = () => {
+        setEditingGame(null);
+        setSheetOpen(true);
     }
-    form.reset();
-  }
+
+    const handleEdit = (game: Game) => {
+        setEditingGame(game);
+        setSheetOpen(true);
+    }
+    
+    const handleDelete = (gameId: string) => {
+        if(firestore && confirm('Are you sure you want to delete this game?')) {
+            const docRef = doc(firestore, "games", gameId);
+            deleteDocumentNonBlocking(docRef);
+        }
+    }
+
+    const handleSave = (gameData: Partial<Game>) => {
+        if (firestore && gamesCollection) {
+            if (editingGame?.id) {
+                const docRef = doc(firestore, "games", editingGame.id);
+                updateDocumentNonBlocking(docRef, gameData);
+            } else {
+                 addDocumentNonBlocking(gamesCollection, {
+                    ...gameData,
+                    // Default values for new games
+                    tags: [],
+                    screenshots: [],
+                    coverImage: { url: 'https://picsum.photos/seed/default-game/400/500', alt: 'Default game cover', hint: 'game cover' },
+                    trailerUrl: '',
+                    subdomain: '',
+                 });
+            }
+        }
+        setSheetOpen(false);
+        setEditingGame(null);
+    }
     
   return (
     <div>
         <div className="flex items-center">
             <h1 className="text-3xl font-bold font-headline">Games</h1>
             <div className="ml-auto flex items-center gap-2">
-                <Sheet>
-                    <SheetTrigger asChild>
-                        <Button size="sm" className="h-8 gap-1">
-                            <PlusCircle className="h-3.5 w-3.5" />
-                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                            Add Game
-                            </span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent>
-                        <form onSubmit={handleSave}>
-                        <SheetHeader>
-                        <SheetTitle>Add a New Game</SheetTitle>
-                        <SheetDescription>
-                            Fill in the details for the new game. Click save when you're done.
-                        </SheetDescription>
-                        </SheetHeader>
-                        <div className="grid gap-4 py-4 max-h-[80vh] overflow-y-auto px-1">
-                            <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="title" className="text-right">Title</Label>
-                                <Input name="title" id="title" placeholder="New Game" className="col-span-3" />
-                            </div>
-                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="description" className="text-right">Description</Label>
-                                <Textarea name="description" id="description" placeholder="Short description" className="col-span-3" />
-                            </div>
-                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="longDescription" className="text-right">Long Desc.</Label>
-                                <Textarea name="longDescription" id="longDescription" placeholder="Full game description" className="col-span-3 h-32" />
-                            </div>
-                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="genre" className="text-right">Genre</Label>
-                                <Input name="genre" id="genre" defaultValue="Sci-Fi" className="col-span-3" />
-                            </div>
-                             <div className="grid grid-cols-4 items-center gap-4">
-                                <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
-                                <Input name="difficulty" id="difficulty" defaultValue="Medium" className="col-span-3" />
-                            </div>
-                        </div>
-                        <SheetFooter>
-                        <SheetClose asChild>
-                            <Button type="submit">Save changes</Button>
-                        </SheetClose>
-                        </SheetFooter>
-                        </form>
-                    </SheetContent>
-                </Sheet>
+                <Button size="sm" className="h-8 gap-1" onClick={handleAdd}>
+                    <PlusCircle className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Add Game
+                    </span>
+                </Button>
             </div>
         </div>
+
+        <GameFormSheet
+            open={sheetOpen}
+            onOpenChange={setSheetOpen}
+            game={editingGame}
+            onSave={handleSave}
+        />
 
         <div className="mt-6">
             <Table>
@@ -158,15 +135,10 @@ export default function AdminGamesPage() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEdit(game)}>Edit</DropdownMenuItem>
                             <DropdownMenuItem 
                                 className="text-destructive focus:text-destructive"
-                                onClick={() => {
-                                    if(firestore){
-                                        const docRef = require("firebase/firestore").doc(firestore, "games", game.id);
-                                        deleteDocumentNonBlocking(docRef);
-                                    }
-                                }}
+                                onClick={() => handleDelete(game.id)}
                             >Delete</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
