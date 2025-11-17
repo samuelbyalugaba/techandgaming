@@ -1,6 +1,8 @@
+
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,14 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Gamepad2 } from "lucide-react";
-import { initiateEmailSignIn, initiateEmailSignUp, useAuth, useUser } from "@/firebase";
+import { initiateEmailSignIn, useAuth, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isSignUp, setIsSignUp] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const auth = useAuth();
@@ -33,7 +33,6 @@ export default function LoginPage() {
     }
   }, [user, isUserLoading, router]);
 
-
   const handleAuthAction = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -42,11 +41,7 @@ export default function LoginPage() {
         return;
     }
     try {
-        if (isSignUp) {
-            initiateEmailSignUp(auth, email, password);
-        } else {
-            initiateEmailSignIn(auth, email, password);
-        }
+        initiateEmailSignIn(auth, email, password);
     } catch (err: any) {
         setError(err.message || "An unexpected error occurred.");
     }
@@ -55,27 +50,32 @@ export default function LoginPage() {
   if (isUserLoading || user) {
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
-            <p>Loading...</p>
+            <div className="text-foreground">Loading...</div>
         </div>
     );
   }
 
-
   return (
-    <div className="flex items-center justify-center min-h-screen bg-secondary">
-      <Card className="w-full max-w-sm">
+    <div className="relative flex items-center justify-center min-h-screen w-full">
+      <Image
+        src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+        alt="Hero background"
+        fill
+        className="object-cover"
+        data-ai-hint="abstract background"
+      />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+      <Card className="w-full max-w-sm z-10 bg-card/60 border-white/20">
         <form onSubmit={handleAuthAction}>
           <CardHeader className="text-center">
              <div className="flex justify-center mb-4">
                 <Gamepad2 className="h-10 w-10 text-primary" style={{filter: 'drop-shadow(0 0 10px hsl(var(--primary)))'}} />
             </div>
             <CardTitle className="text-2xl font-headline">
-              {isSignUp ? "Create Account" : "Welcome Back"}
+              Welcome Back
             </CardTitle>
             <CardDescription>
-              {isSignUp
-                ? "Enter your details to create an account."
-                : "Enter your credentials to access your account."}
+              Enter your credentials to access your account.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
@@ -104,20 +104,7 @@ export default function LoginPage() {
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
             <Button className="w-full" type="submit">
-              {isSignUp ? "Sign Up" : "Sign In"}
-            </Button>
-            <Button
-              variant="link"
-              type="button"
-              className="text-muted-foreground"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setError(null);
-              }}
-            >
-              {isSignUp
-                ? "Already have an account? Sign In"
-                : "Don't have an account? Sign Up"}
+              Sign In
             </Button>
           </CardFooter>
         </form>
