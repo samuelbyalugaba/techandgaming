@@ -63,7 +63,7 @@ export default function AdminGamesPage() {
                     screenshots: [],
                     coverImage: { url: 'https://picsum.photos/seed/default-game/400/500', alt: 'Default game cover', hint: 'game cover' },
                     trailerUrl: '',
-                    subdomain: '',
+                    playUrl: '',
                  });
             }
         }

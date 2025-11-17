@@ -72,12 +72,12 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
           {/* Play Button */}
-          <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105" asChild>
-            <Link href={`/games/${game.id}`} className="flex items-center justify-center w-full h-full">
-              <PlayCircle className="mr-3 h-8 w-8" />
-              Play Now
-            </Link>
-          </Button>
+          <a href={game.playUrl} target="_blank" rel="noopener noreferrer" className="block w-full">
+            <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105">
+                <PlayCircle className="mr-3 h-8 w-8" />
+                Play Now
+            </Button>
+          </a>
 
           {/* Description */}
           <div>

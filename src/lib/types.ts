@@ -11,7 +11,7 @@ export type Game = {
   trailerUrl: string;
   screenshots: { id: string, url: string; alt: string, hint: string }[];
   mechanics: string[];
-  subdomain: string;
+  playUrl: string;
   coverImage: { id: string, url: string; alt: string, hint: string };
 };
 
