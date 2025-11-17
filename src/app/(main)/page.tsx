@@ -1,15 +1,35 @@
+"use client";
+
 import { GameCard } from '@/components/game-card';
 import { Button } from '@/components/ui/button';
-import { games, posts } from '@/lib/data';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { ArrowRight, Newspaper } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCollection } from '@/firebase';
+import { collection, limit, query } from 'firebase/firestore';
+import { useFirestore, useMemoFirebase } from '@/firebase/provider';
+import { Game, Post } from '@/lib/types';
 
 export default function Home() {
-  const heroImage = PlaceHolderImages.find(p => p.id === 'hero-background');
-  const featuredGames = games.slice(0, 4);
-  const latestPosts = posts.slice(0, 2);
+  const firestore = useFirestore();
+
+  const gamesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'games'), limit(4));
+  }, [firestore]);
+  const { data: featuredGames } = useCollection<Game>(gamesQuery);
+
+  const postsQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'blogPosts'), limit(2));
+  }, [firestore]);
+  const { data: latestPosts } = useCollection<Post>(postsQuery);
+
+  const heroImage = {
+    imageUrl: "https://images.unsplash.com/photo-1762279389042-9439bfb6c155?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMGZ1dHVyaXN0aWN8ZW58MHx8fHwxNzYzMzE2OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+    description: "Abstract futuristic digital landscape",
+    imageHint: "abstract futuristic"
+  };
 
   return (
     <div className="flex flex-col">
@@ -54,7 +74,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold font-headline text-center">Featured Games</h2>
           <p className="mt-2 text-center text-muted-foreground">Hand-picked titles pushing the boundaries of play.</p>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredGames.map(game => (
+            {featuredGames?.map(game => (
               <GameCard key={game.id} game={game} />
             ))}
           </div>
@@ -67,7 +87,7 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold font-headline text-center">Latest News</h2>
           <p className="mt-2 text-center text-muted-foreground">Stay updated with the world of tech and gaming.</p>
           <div className="mt-12 max-w-3xl mx-auto space-y-8">
-            {latestPosts.map(post => (
+            {latestPosts?.map(post => (
               <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
                 <article className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                   <div className="md:col-span-1 relative aspect-video w-full rounded-lg overflow-hidden">
@@ -80,7 +100,9 @@ export default function Home() {
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <p className="text-sm text-muted-foreground">{post.date}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {post.date && new Date((post.date as any).seconds * 1000).toLocaleDateString()}
+                    </p>
                     <h3 className="text-xl font-bold font-headline mt-1 group-hover:text-primary">{post.title}</h3>
                     <p className="text-muted-foreground mt-2">{post.summary}</p>
                   </div>

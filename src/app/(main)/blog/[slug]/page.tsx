@@ -1,7 +1,12 @@
-import { posts } from '@/lib/data';
+"use client";
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Calendar, User } from 'lucide-react';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, where, limit } from 'firebase/firestore';
+import { Post } from '@/lib/types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type PostPageProps = {
   params: {
@@ -9,18 +14,16 @@ type PostPageProps = {
   };
 };
 
-export async function generateStaticParams() {
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
-
 export default function PostPage({ params }: PostPageProps) {
-  const post = posts.find((p) => p.slug === params.slug);
+  const firestore = useFirestore();
 
-  if (!post) {
-    notFound();
-  }
+  const postQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'blogPosts'), where('slug', '==', params.slug), limit(1));
+  }, [firestore, params.slug]);
+
+  const { data: posts, isLoading } = useCollection<Post>(postQuery);
+  const post = posts?.[0];
 
   // Simple markdown to HTML conversion
   const renderContent = (content: string) => {
@@ -57,6 +60,16 @@ export default function PostPage({ params }: PostPageProps) {
       }, []);
   };
 
+  if (isLoading) {
+    return <PostSkeleton />;
+  }
+
+  if (!post) {
+    notFound();
+  }
+  
+  const postDate = post.date && (post.date as any).seconds ? new Date((post.date as any).seconds * 1000) : new Date();
+
   return (
     <article>
       <div className="relative w-full h-[40vh]">
@@ -83,7 +96,7 @@ export default function PostPage({ params }: PostPageProps) {
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              <span>{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+              <span>{postDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
             </div>
           </div>
         </div>
@@ -95,3 +108,27 @@ export default function PostPage({ params }: PostPageProps) {
     </article>
   );
 }
+
+const PostSkeleton = () => (
+  <article>
+    <Skeleton className="relative w-full h-[40vh]" />
+    <div className="container max-w-3xl mx-auto -mt-24 relative z-10 pb-16 md:pb-24">
+      <div className="bg-card p-8 md:p-12 rounded-lg shadow-xl">
+        <Skeleton className="h-10 w-3/4 mx-auto" />
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-5 w-32" />
+        </div>
+      </div>
+      <div className="mt-8 space-y-4">
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+        <br/>
+        <Skeleton className="h-6 w-full" />
+        <Skeleton className="h-4 w-full" />
+      </div>
+    </div>
+  </article>
+);

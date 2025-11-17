@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export type Game = {
   id: string;
   title: string;
@@ -18,7 +20,7 @@ export type Post = {
   slug: string;
   title: string;
   author: string;
-  date: string;
+  date: Timestamp | Date | string;
   summary: string;
   content: string; // Markdown content
   thumbnail: { id: string, url: string; alt: string, hint: string };

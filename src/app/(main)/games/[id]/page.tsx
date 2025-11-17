@@ -1,4 +1,4 @@
-import { games } from '@/lib/data';
+"use client"
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,9 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Leaderboard } from '@/components/leaderboard';
+import { useDoc, useFirestore, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
+import { Game } from '@/lib/types';
 
 type GameDetailPageProps = {
   params: {
@@ -19,14 +22,18 @@ type GameDetailPageProps = {
   };
 };
 
-export async function generateStaticParams() {
-  return games.map((game) => ({
-    id: game.id,
-  }));
-}
-
 export default function GameDetailPage({ params }: GameDetailPageProps) {
-  const game = games.find((g) => g.id === params.id);
+  const firestore = useFirestore();
+  const gameRef = useMemoFirebase(() => {
+    if (!firestore || !params.id) return null;
+    return doc(firestore, 'games', params.id);
+  }, [firestore, params.id]);
+
+  const { data: game, isLoading } = useDoc<Game>(gameRef);
+
+  if (isLoading) {
+    return <GameDetailSkeleton />;
+  }
 
   if (!game) {
     notFound();
@@ -132,7 +139,6 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
             </ul>
           </div>
           
-          {/* Leaderboard */}
           <Leaderboard gameId={game.id} />
 
         </aside>
@@ -140,3 +146,39 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
     </div>
   );
 }
+
+const GameDetailSkeleton = () => (
+  <div className="bg-secondary">
+    <section className="relative h-[50vh] bg-muted animate-pulse p-8">
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
+    </section>
+    <div className="container max-w-screen-2xl py-12 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+      <div className="lg:col-span-2 space-y-8">
+        <div className="w-full h-16 bg-muted animate-pulse rounded-lg"></div>
+        <div>
+          <div className="h-8 w-48 bg-muted animate-pulse rounded"></div>
+          <div className="mt-4 space-y-2">
+            <div className="h-4 w-full bg-muted animate-pulse rounded"></div>
+            <div className="h-4 w-full bg-muted animate-pulse rounded"></div>
+            <div className="h-4 w-3/4 bg-muted animate-pulse rounded"></div>
+          </div>
+        </div>
+        <div>
+          <div className="h-8 w-32 bg-muted animate-pulse rounded"></div>
+          <div className="mt-4 aspect-video rounded-lg bg-muted animate-pulse"></div>
+        </div>
+      </div>
+      <aside className="space-y-8">
+        <div>
+          <div className="h-8 w-40 bg-muted animate-pulse rounded mb-4"></div>
+          <div className="space-y-3">
+            <div className="h-5 w-full bg-muted animate-pulse rounded"></div>
+            <div className="h-5 w-full bg-muted animate-pulse rounded"></div>
+            <div className="h-5 w-full bg-muted animate-pulse rounded"></div>
+          </div>
+        </div>
+        <div className="h-64 w-full bg-muted animate-pulse rounded-lg"></div>
+      </aside>
+    </div>
+  </div>
+);

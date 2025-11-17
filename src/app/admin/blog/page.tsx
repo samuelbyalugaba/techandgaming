@@ -22,7 +22,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { posts } from "@/lib/data"
 import { PlusCircle, MoreHorizontal } from "lucide-react"
 import {
     DropdownMenu,
@@ -31,13 +30,31 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
+import { collection, serverTimestamp } from "firebase/firestore";
+import { Post } from "@/lib/types";
+import React from "react";
 
 export default function AdminBlogPage() {
+    const firestore = useFirestore();
+    const postsCollection = useMemoFirebase(() => firestore ? collection(firestore, 'blogPosts') : null, [firestore]);
+    const { data: posts } = useCollection<Post>(postsCollection);
     
-    // This would be a server action in a real app
     const handleSave = (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Saving post data... (demo only)");
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const newPost = Object.fromEntries(formData.entries());
+
+        if (postsCollection) {
+            addDocumentNonBlocking(postsCollection, {
+                ...newPost,
+                author: 'Admin', // Assuming admin for now
+                date: serverTimestamp(),
+                thumbnail: { url: '', alt: '', hint: ''}
+            });
+        }
+        form.reset();
     }
     
   return (
@@ -65,19 +82,19 @@ export default function AdminBlogPage() {
                         <div className="grid gap-4 py-4 max-h-[80vh] overflow-y-auto px-1">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="title" className="text-right">Title</Label>
-                                <Input id="title" placeholder="Post Title" className="col-span-3" />
+                                <Input name="title" id="title" placeholder="Post Title" className="col-span-3" />
                             </div>
                              <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="slug" className="text-right">Slug</Label>
-                                <Input id="slug" placeholder="post-title" className="col-span-3" />
+                                <Input name="slug" id="slug" placeholder="post-title" className="col-span-3" />
                             </div>
                              <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="summary" className="text-right">Summary</Label>
-                                <Textarea id="summary" placeholder="A short summary of the post" className="col-span-3" />
+                                <Textarea name="summary" id="summary" placeholder="A short summary of the post" className="col-span-3" />
                             </div>
                              <div className="grid grid-cols-4 items-start gap-4">
                                 <Label htmlFor="content" className="text-right pt-2">Content</Label>
-                                <Textarea id="content" placeholder="Write your post content in Markdown..." className="col-span-3 h-64" />
+                                <Textarea name="content" id="content" placeholder="Write your post content in Markdown..." className="col-span-3 h-64" />
                             </div>
                         </div>
                         <SheetFooter>
@@ -104,11 +121,13 @@ export default function AdminBlogPage() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {posts.map(post => (
+                {posts?.map(post => (
                     <TableRow key={post.id}>
                         <TableCell className="font-medium">{post.title}</TableCell>
                         <TableCell className="hidden md:table-cell">{post.author}</TableCell>
-                        <TableCell className="hidden md:table-cell">{post.date}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                             {post.date && new Date((post.date as any).seconds * 1000).toLocaleDateString()}
+                        </TableCell>
                         <TableCell>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
@@ -120,7 +139,15 @@ export default function AdminBlogPage() {
                             <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+                            <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                    if (firestore) {
+                                        const docRef = require("firebase/firestore").doc(firestore, "blogPosts", post.id);
+                                        deleteDocumentNonBlocking(docRef);
+                                    }
+                                }}
+                            >Delete</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         </TableCell>

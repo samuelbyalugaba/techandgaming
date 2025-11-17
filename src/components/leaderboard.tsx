@@ -1,16 +1,61 @@
-import { leaderboardData } from '@/lib/data';
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Crown } from 'lucide-react';
 import Image from 'next/image';
+import { useCollection, useFirestore, useMemoFirebase } from '@/firebase';
+import { collection, query, orderBy, limit } from 'firebase/firestore';
+import { LeaderboardEntry } from '@/lib/types';
 
 interface LeaderboardProps {
   gameId: string;
 }
 
 export function Leaderboard({ gameId }: LeaderboardProps) {
-  const data = leaderboardData[gameId];
+  const firestore = useFirestore();
 
-  if (!data) {
+  const leaderboardQuery = useMemoFirebase(() => {
+    if (!firestore || !gameId) return null;
+    return query(
+      collection(firestore, 'leaderboards', gameId, 'entries'),
+      orderBy('score', 'desc'),
+      limit(5)
+    );
+  }, [firestore, gameId]);
+
+  const { data, isLoading } = useCollection<Omit<LeaderboardEntry, 'rank'>>(leaderboardQuery);
+  
+  const leaderboardData = data?.map((entry, index) => ({
+      ...entry,
+      rank: index + 1,
+  }));
+
+  if (isLoading) {
+      return (
+          <Card>
+              <CardHeader>
+                  <CardTitle className="flex items-center gap-2 font-headline">
+                      <Crown className="h-6 w-6 text-yellow-500" />
+                      Leaderboard
+                  </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                  {Array.from({length: 5}).map((_, i) => (
+                      <div key={i} className="flex items-center gap-4 animate-pulse">
+                          <div className="font-bold text-lg w-6 h-6 bg-muted rounded"></div>
+                          <div className="w-10 h-10 rounded-full bg-muted"></div>
+                          <div className="flex-grow space-y-2">
+                              <div className="h-4 w-24 bg-muted rounded"></div>
+                              <div className="h-3 w-16 bg-muted rounded"></div>
+                          </div>
+                      </div>
+                  ))}
+              </CardContent>
+          </Card>
+      )
+  }
+
+  if (!leaderboardData || leaderboardData.length === 0) {
     return null;
   }
 
@@ -24,7 +69,7 @@ export function Leaderboard({ gameId }: LeaderboardProps) {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {data.map((entry, index) => (
+          {leaderboardData.map((entry, index) => (
             <li key={entry.rank} className="flex items-center gap-4">
               <div className="font-bold text-lg w-6 text-center">{entry.rank}</div>
               <Image

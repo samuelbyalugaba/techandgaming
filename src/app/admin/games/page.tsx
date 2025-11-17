@@ -23,26 +23,41 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { games } from "@/lib/data"
 import Image from "next/image"
-import { PlusCircle, MoreHorizontal, File, ListFilter } from "lucide-react"
+import { PlusCircle, MoreHorizontal } from "lucide-react"
 import {
     DropdownMenu,
-    DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
+import { useCollection, useFirestore, useMemoFirebase, addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase";
+import { collection } from "firebase/firestore";
+import { Game } from "@/lib/types";
+import React from "react";
 
 export default function AdminGamesPage() {
+    const firestore = useFirestore();
+    const gamesCollection = useMemoFirebase(() => firestore ? collection(firestore, 'games') : null, [firestore]);
+    const { data: games } = useCollection<Game>(gamesCollection);
 
-  // This would be a server action in a real app
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Saving game data... (demo only)");
-    // In real app, you would get form data and call a server action
+    const form = e.target as HTMLFormElement;
+    const formData = new FormData(form);
+    const newGame = Object.fromEntries(formData.entries());
+    if (gamesCollection) {
+        // This is a simplified version. In a real app, you'd have better data handling and validation.
+        addDocumentNonBlocking(gamesCollection, {
+            ...newGame,
+            tags: [],
+            screenshots: [],
+            mechanics: [],
+            coverImage: { url: '', alt: '', hint: ''}
+        });
+    }
+    form.reset();
   }
     
   return (
@@ -70,19 +85,23 @@ export default function AdminGamesPage() {
                         <div className="grid gap-4 py-4 max-h-[80vh] overflow-y-auto px-1">
                             <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="title" className="text-right">Title</Label>
-                                <Input id="title" defaultValue="New Game" className="col-span-3" />
+                                <Input name="title" id="title" placeholder="New Game" className="col-span-3" />
                             </div>
                              <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="description" className="text-right">Description</Label>
-                                <Textarea id="description" placeholder="Short description" className="col-span-3" />
+                                <Textarea name="description" id="description" placeholder="Short description" className="col-span-3" />
                             </div>
                              <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="longDescription" className="text-right">Long Desc.</Label>
-                                <Textarea id="longDescription" placeholder="Full game description" className="col-span-3 h-32" />
+                                <Textarea name="longDescription" id="longDescription" placeholder="Full game description" className="col-span-3 h-32" />
                             </div>
                              <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="genre" className="text-right">Genre</Label>
-                                <Input id="genre" defaultValue="Sci-Fi" className="col-span-3" />
+                                <Input name="genre" id="genre" defaultValue="Sci-Fi" className="col-span-3" />
+                            </div>
+                             <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="difficulty" className="text-right">Difficulty</Label>
+                                <Input name="difficulty" id="difficulty" defaultValue="Medium" className="col-span-3" />
                             </div>
                         </div>
                         <SheetFooter>
@@ -112,17 +131,17 @@ export default function AdminGamesPage() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {games.map(game => (
+                {games?.map(game => (
                     <TableRow key={game.id}>
                         <TableCell className="hidden sm:table-cell">
-                        <Image
+                        {game.coverImage?.url && <Image
                             alt={game.title}
                             className="aspect-square rounded-md object-cover"
                             height="64"
                             src={game.coverImage.url}
                             width="64"
                             data-ai-hint={game.coverImage.hint}
-                        />
+                        />}
                         </TableCell>
                         <TableCell className="font-medium">{game.title}</TableCell>
                         <TableCell>
@@ -140,7 +159,15 @@ export default function AdminGamesPage() {
                             <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">Delete</DropdownMenuItem>
+                            <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive"
+                                onClick={() => {
+                                    if(firestore){
+                                        const docRef = require("firebase/firestore").doc(firestore, "games", game.id);
+                                        deleteDocumentNonBlocking(docRef);
+                                    }
+                                }}
+                            >Delete</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                         </TableCell>

@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Card,
   CardContent,
@@ -5,14 +7,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { games, posts } from "@/lib/data"
 import { Gamepad2, Newspaper, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useCollection, useFirestore, useMemoFirebase } from "@/firebase"
+import { collection } from "firebase/firestore"
+import { Game, Post } from "@/lib/types"
 
 export default function AdminDashboard() {
-  const totalGames = games.length
-  const totalPosts = posts.length
+  const firestore = useFirestore();
+
+  const gamesCollection = useMemoFirebase(() => firestore ? collection(firestore, 'games') : null, [firestore]);
+  const { data: games } = useCollection<Game>(gamesCollection);
+
+  const postsCollection = useMemoFirebase(() => firestore ? collection(firestore, 'blogPosts') : null, [firestore]);
+  const { data: posts } = useCollection<Post>(postsCollection);
+
+  const totalGames = games?.length ?? 0;
+  const totalPosts = posts?.length ?? 0;
 
   return (
     <div>
@@ -62,7 +74,7 @@ export default function AdminDashboard() {
             <CardDescription>Use the navigation on the left to add, edit, or delete games and blog posts.</CardDescription>
         </CardHeader>
         <CardContent>
-            <p>This dashboard is a simplified Content Management System (CMS) for the Tech And Gaming website. Data is currently mocked and not connected to a live Firestore database. All changes made here are for demonstration purposes and will not persist.</p>
+            <p>This dashboard is a simplified Content Management System (CMS) for the Tech And Gaming website. Data is now connected to a live Firestore database. All changes made here will persist.</p>
         </CardContent>
       </Card>
     </div>
