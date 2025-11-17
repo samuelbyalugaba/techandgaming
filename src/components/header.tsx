@@ -36,6 +36,7 @@ export function Header() {
   const { user } = useUser();
   const firestore = useFirestore();
 
+  // This logic is kept in case you want to re-implement RBAC later.
   const adminRoleRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
     return doc(firestore, 'roles_admin', user.uid);
@@ -121,15 +122,15 @@ export function Header() {
                 ))}
                 {isAdmin && (
                   <Link
-                    href="/admin"
+                    href="/management"
                     className={cn(
                       "text-lg font-medium transition-colors hover:text-foreground/80",
-                      pathname.startsWith('/admin')
+                      pathname.startsWith('/management')
                         ? "text-foreground"
                         : "text-foreground/60"
                     )}
                   >
-                    Admin
+                    Management
                   </Link>
                 )}
               </div>
@@ -152,7 +153,7 @@ export function Header() {
                 <DropdownMenuContent align="end">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    {isAdmin && <DropdownMenuItem asChild><Link href="/admin">Admin Panel</Link></DropdownMenuItem>}
+                    {isAdmin && <DropdownMenuItem asChild><Link href="/management">Management</Link></DropdownMenuItem>}
                     <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
                         <LogOut className="mr-2 h-4 w-4" />
                         Log out

@@ -151,12 +151,6 @@
         "gameId",
         "entries"
       ]
-    },
-    "AdminRole": {
-      "title": "Admin Role",
-      "type": "object",
-      "description": "An empty object whose existence at /roles_admin/{userId} grants admin privileges.",
-      "properties": {}
     }
   },
   "auth": {
@@ -230,24 +224,7 @@
             }
           ]
         }
-      },
-      {
-        "path": "/roles_admin/{userId}",
-        "definition": {
-          "entityName": "AdminRole",
-          "schema": {
-            "$ref": "#/backend/entities/AdminRole"
-          },
-          "description": "Documents in this collection indicate admin privileges for the user. Existence of a document with the user's UID grants admin rights.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            }
-          ]
-        }
       }
-    ],
-    "reasoning": "This Firestore structure is designed to support the 'Tech And Gaming' application's features, focusing on game listings, blog posts, and leaderboards. It prioritizes authorization independence and secure list operations. \n\n*   **Games:** The `games` collection stores the main game data. Tags relationships are managed via the `tagIds` property (no subcollection needed for many-to-many relationship, keeping security rules simpler).\n*   **Blog Posts:** The `blogPosts` collection stores blog post content.  Separate from the `games` collection due to potentially different access control requirements.\n*   **Tags:** The `tags` collection stores the tags for the games.\n*   **Leaderboards:** The `leaderboards` collection contains the leaderboards for each game.\n*   **Admin Roles:** The `roles_admin` collection is a top-level collection that stores documents where the document ID is a user's UID. The existence of a document grants that user administrative privileges.\n\n**Authorization Independence (Denormalization):** All collections are top-level, avoiding hierarchical dependencies. Game documents contain all necessary information for display and filtering.  Leaderboard document includes the `gameId` to avoid dependency on the Game document for leaderboard data.\n\n**QAPs (Rules Are Not Filters):** The structure enables secure `list` operations by ensuring each collection contains data with uniform access requirements.  The separate collections for `games`, `blogPosts`, `tags`, and `leaderboards` ensure that listing operations can be secured without requiring filtering within the rules.\n\n**Admin CMS:** The design assumes an admin CMS that directly interacts with these collections. Security rules are configured to restrict write access to the `games`, `blogPosts`, `tags`, and `leaderboards` collections to authorized admin users only, as determined by the `/roles_admin/{uid}` collection."
+    ]
   }
 }
