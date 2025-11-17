@@ -39,7 +39,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
   }
 
   if (!game) {
-    notFound();
+    return notFound();
   }
 
   return (
