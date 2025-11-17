@@ -1,0 +1,132 @@
+/**
+ * @file Firestore Security Rules for Tech And Gaming App
+ * @version Prototype
+ *
+ * @description
+ * This ruleset enforces a role-based access control model with an admin CMS.
+ * All top-level collections (`games`, `blogPosts`, `tags`, `leaderboards`)
+ * are secured to allow read access to everyone, but write access is restricted
+ * to admin users only. Admin status is determined by the existence of a
+ * document in the `/roles_admin/{userId}` collection.
+ *
+ * Data Structure:
+ * All data is stored in top-level collections: `/games/{gameId}`,
+ * `/blogPosts/{blogPostId}`, `/tags/{tagId}`, and `/leaderboards/{leaderboardId}`.
+ *
+ * Key Security Decisions:
+ * - Public read access is granted to all collections to facilitate discovery.
+ * - Write access (create, update, delete) is strictly limited to admin users.
+ * - Admin status is determined by the existence of a document in the
+ *   `/roles_admin/{userId}` collection, where the document ID is the user's UID.
+ * - No data shape validation is performed in this prototype to allow for rapid
+ *   iteration.
+ *
+ * Denormalization for Authorization:
+ * - Leaderboard documents include the `gameId`, avoiding dependency on the Game
+ *   document for leaderboard data and simplifying authorization.
+ *
+ * Structural Segregation:
+ * - Public content (games, blog posts, tags, leaderboards) is stored in
+ *   separate top-level collections, enabling simpler and more performant
+ *   `list` operations without filtering.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Checks if the user is signed in.
+     * @return {bool} True if the user is signed in, false otherwise.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * @description Checks if the user is an admin.
+     * @return {bool} True if the user is an admin, false otherwise.
+     */
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/roles_admin/$(request.auth.uid));
+    }
+
+    /**
+     * @description Checks if the user is an admin.
+     * @param {string} userId - The user ID to check.
+     * @return {bool} True if the user ID matches the request's auth UID.
+     */
+    function isOwner(userId) {
+        return request.auth.uid == userId;
+    }
+
+    /**
+     * @description Rules for the /games/{gameId} collection.
+     * @path /games/{gameId}
+     * @allow (get, list) Public read access is allowed.
+     * @allow (create, update, delete) An admin user can create, update, or delete a game.
+     * @deny (create, update, delete) A non-admin user cannot create, update, or delete a game.
+     * @principle Enforces role-based access control for game data.
+     */
+    match /games/{gameId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isAdmin();
+    }
+
+    /**
+     * @description Rules for the /blogPosts/{blogPostId} collection.
+     * @path /blogPosts/{blogPostId}
+     * @allow (get, list) Public read access is allowed.
+     * @allow (create, update, delete) An admin user can create, update, or delete a blog post.
+     * @deny (create, update, delete) A non-admin user cannot create, update, or delete a blog post.
+     * @principle Enforces role-based access control for blog post data.
+     */
+    match /blogPosts/{blogPostId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isAdmin();
+    }
+
+    /**
+     * @description Rules for the /tags/{tagId} collection.
+     * @path /tags/{tagId}
+     * @allow (get, list) Public read access is allowed.
+     * @allow (create, update, delete) An admin user can create, update, or delete a tag.
+     * @deny (create, update, delete) A non-admin user cannot create, update, or delete a tag.
+     * @principle Enforces role-based access control for tag data.
+     */
+    match /tags/{tagId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isAdmin();
+    }
+
+    /**
+     * @description Rules for the /leaderboards/{leaderboardId} collection.
+     * @path /leaderboards/{leaderboardId}
+     * @allow (get, list) Public read access is allowed.
+     * @allow (create, update, delete) An admin user can create, update, or delete a leaderboard.
+     * @deny (create, update, delete) A non-admin user cannot create, update, or delete a leaderboard.
+     * @principle Enforces role-based access control for leaderboard data.
+     */
+    match /leaderboards/{leaderboardId} {
+      allow get, list: if true;
+      allow create, update, delete: if isSignedIn() && isAdmin();
+    }
+
+    /**
+     * @description Rules for the /roles_admin/{userId} collection.
+     * @path /roles_admin/{userId}
+     * @allow create The user can create their own admin role if the userId matches their auth.uid.
+     * @allow get The user can get their own admin role if the userId matches their auth.uid.
+     * @allow delete Only the user who owns the admin role can delete it.
+     * @deny list Listing admin roles is not permitted.
+     * @deny update Admin roles are immutable once created.
+     * @principle Enforces user-ownership for admin role creation and deletion.
+     */
+    match /roles_admin/{userId} {
+        allow create: if isSignedIn() && isOwner(userId);
+        allow get: if isSignedIn() && isOwner(userId);
+        allow update: if false;
+        allow delete: if isSignedIn() && isOwner(userId);
+        allow list: if false;
+    }
+  }
+}
