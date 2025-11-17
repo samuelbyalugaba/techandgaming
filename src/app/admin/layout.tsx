@@ -7,7 +7,7 @@ import {
   LayoutDashboard
 } from "lucide-react"
 import { useDoc, useFirestore, useUser, useMemoFirebase } from "@/firebase"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { cn } from "@/lib/utils"
 import { doc } from "firebase/firestore"
 
@@ -22,7 +22,6 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const pathname = usePathname()
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
@@ -33,25 +32,22 @@ export default function AdminLayout({
   }, [firestore, user]);
 
   const { data: adminRole, isLoading: isAdminRoleLoading } = useDoc(adminRoleRef);
-  const [isAuthorized, setIsAuthorized] = useState(false);
-
+  
   useEffect(() => {
-    const isChecking = isUserLoading || isAdminRoleLoading;
-    
-    if (!isChecking) {
+    const isCheckingAuth = isUserLoading || isAdminRoleLoading;
+    if (!isCheckingAuth) {
       if (!user) {
-        router.push('/login');
+        router.replace('/login');
       } else if (adminRole === null) {
-        // Not an admin, redirect to home.
-        router.push('/');
-      } else {
-        // Is an admin
-        setIsAuthorized(true);
+        // User is logged in but not an admin, redirect to home
+        router.replace('/');
       }
     }
   }, [user, isUserLoading, adminRole, isAdminRoleLoading, router]);
 
-  if (isUserLoading || isAdminRoleLoading || !isAuthorized) {
+  const isAuthorized = !isUserLoading && !isAdminRoleLoading && !!user && !!adminRole;
+
+  if (!isAuthorized) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <p>Checking permissions...</p>
@@ -75,7 +71,7 @@ export default function AdminLayout({
                 <Link
                   key={href}
                   href={href}
-                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", { "bg-muted text-primary": pathname === href})}
+                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", { "bg-muted text-primary": usePathname() === href})}
                 >
                   <Icon className="h-4 w-4" />
                   {label}
