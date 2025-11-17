@@ -25,6 +25,7 @@ export default function AdminLayout({
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const firestore = useFirestore();
+  const pathname = usePathname();
 
   const adminRoleRef = useMemoFirebase(() => {
     if (!firestore || !user) return null;
@@ -71,7 +72,7 @@ export default function AdminLayout({
                 <Link
                   key={href}
                   href={href}
-                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", { "bg-muted text-primary": usePathname() === href})}
+                  className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary", { "bg-muted text-primary": pathname === href})}
                 >
                   <Icon className="h-4 w-4" />
                   {label}
