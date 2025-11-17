@@ -73,7 +73,7 @@ export default function GameDetailPage({ params }: GameDetailPageProps) {
         <div className="lg:col-span-2 space-y-8">
           {/* Play Button */}
           <Button size="lg" className="w-full h-16 text-xl bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all hover:scale-105" asChild>
-            <Link href={`/play/${game.subdomain}`} className="flex items-center justify-center w-full h-full">
+            <Link href={`/games/${game.id}`} className="flex items-center justify-center w-full h-full">
               <PlayCircle className="mr-3 h-8 w-8" />
               Play Now
             </Link>
