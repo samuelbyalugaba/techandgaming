@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { Gamepad2, Menu, LogIn } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Gamepad2, Menu, LogOut, User as UserIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth, useUser } from "@/firebase";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +11,16 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,6 +30,17 @@ const navLinks = [
 
 export function Header() {
   const pathname = usePathname();
+  const auth = useAuth();
+  const router = useRouter();
+  const { user } = useUser();
+
+  const handleSignOut = () => {
+    if (auth) {
+      auth.signOut();
+      router.push('/login');
+    }
+  };
+
 
   const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link
@@ -94,12 +115,27 @@ export function Header() {
         </div>
         
         <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button asChild>
-            <Link href="/admin">
-              <LogIn className="mr-2 h-4 w-4" />
-              Admin Panel
-            </Link>
-          </Button>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="secondary" size="icon" className="rounded-full">
+                        <Avatar>
+                            <AvatarImage src={user?.photoURL ?? ''} alt={user?.displayName ?? 'User'} />
+                            <AvatarFallback>
+                                <UserIcon />
+                            </AvatarFallback>
+                        </Avatar>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild><Link href="/admin">Admin Panel</Link></DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log out
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       </div>
     </header>
