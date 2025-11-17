@@ -1,3 +1,64 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-background",
+      "description": "Abstract futuristic digital landscape",
+      "imageUrl": "https://images.unsplash.com/photo-1762279389042-9439bfb6c155?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxhYnN0cmFjdCUyMGZ1dHVyaXN0aWN8ZW58MHx8fHwxNzYzMzE2OTI1fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract futuristic"
+    },
+    {
+      "id": "game-cover-1",
+      "description": "Game cover for 'Cosmic Rift'",
+      "imageUrl": "https://images.unsplash.com/photo-1614314266357-8a2e58059af5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzcGFjZSUyMGV4cGxvcmF0aW9ufGVufDB8fHx8MTc2MzM5MjE2N3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "space exploration"
+    },
+    {
+      "id": "game-cover-2",
+      "description": "Game cover for 'Cyberflow'",
+      "imageUrl": "https://images.unsplash.com/photo-1551771685-c367c9127a03?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxjeWJlcnB1bmslMjBjaXR5fGVufDB8fHx8MTc2MzMzNTAxNXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "cyberpunk city"
+    },
+    {
+      "id": "game-cover-3",
+      "description": "Game cover for 'Rune Weavers'",
+      "imageUrl": "https://images.unsplash.com/photo-1675611559364-4b3e04347077?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmYW50YXN5JTIwbWFnaWN8ZW58MHx8fHwxNzYzMzk5MDM2fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy magic"
+    },
+    {
+      "id": "game-cover-4",
+      "description": "Game cover for 'Mech Warriors'",
+      "imageUrl": "https://images.unsplash.com/photo-1761762678394-df2a02214b30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Z2lhbnQlMjByb2JvdHxlbnwwfHx8fDE3NjMzNzUxNzV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "giant robot"
+    },
+    {
+      "id": "game-screenshot-1",
+      "description": "Screenshot of a space battle",
+      "imageUrl": "https://images.unsplash.com/photo-1705594975210-02cbcc7af5ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxzcGFjZSUyMGJhdHRsZXxlbnwwfHx8fDE3NjMzNjk5MzJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "space battle"
+    },
+    {
+      "id": "game-screenshot-2",
+      "description": "Screenshot of a neon-lit city street",
+      "imageUrl": "https://images.unsplash.com/photo-1672872476232-da16b45c9001?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxuZW9uJTIwY2l0eXxlbnwwfHx8fDE3NjMzNDcxOTB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "neon city"
+    },
+    {
+      "id": "game-screenshot-3",
+      "description": "Screenshot of a character casting a spell",
+      "imageUrl": "https://images.unsplash.com/photo-1715631318159-eb2e11621172?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxtYWdpYyUyMHNwZWxsfGVufDB8fHx8MTc2MzMwMTMzNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "magic spell"
+    },
+    {
+      "id": "blog-thumb-1",
+      "description": "Thumbnail for a blog post about game development",
+      "imageUrl": "https://images.unsplash.com/photo-1585079542156-2755d9c8a094?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Z2FtZSUyMGRldmVsb3BtZW50fGVufDB8fHx8MTc2MzM5NDQ4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "game development"
+    },
+    {
+      "id": "blog-thumb-2",
+      "description": "Thumbnail for a blog post about esports",
+      "imageUrl": "https://images.unsplash.com/photo-1598550487031-0898b4852123?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxlc3BvcnRzJTIwdG91cm5hbWVudHxlbnwwfHx8fDE3NjM0MDI1MzB8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "esports tournament"
+    }
+  ]
 }
