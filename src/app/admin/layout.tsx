@@ -4,7 +4,8 @@ import { usePathname, useRouter } from "next/navigation"
 import {
   Gamepad2,
   Newspaper,
-  LayoutDashboard
+  LayoutDashboard,
+  Loader2
 } from "lucide-react"
 import { useUser } from "@/firebase"
 import { useEffect } from "react"
@@ -34,7 +35,7 @@ export default function AdminLayout({
   if (isUserLoading || !user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <p>Loading...</p>
+        <Loader2 className="h-10 w-10 text-primary animate-spin" />
       </div>
     );
   }

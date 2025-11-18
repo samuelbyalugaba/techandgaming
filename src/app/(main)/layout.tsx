@@ -3,6 +3,7 @@
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { useUser } from "@/firebase";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,10 +22,9 @@ export default function MainLayout({
   }, [user, isUserLoading, router]);
 
   if (isUserLoading || !user) {
-    // You can show a global loading spinner here
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
-        <p>Loading...</p>
+        <Loader2 className="h-10 w-10 text-primary animate-spin" />
       </div>
     );
   }

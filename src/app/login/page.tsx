@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Gamepad2 } from "lucide-react";
+import { Gamepad2, Loader2 } from "lucide-react";
 import { initiateEmailSignIn, useAuth, useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { Footer } from "@/components/footer";
@@ -54,7 +54,7 @@ export default function LoginPage() {
   if (isUserLoading || user) {
     return (
         <div className="flex items-center justify-center min-h-screen bg-background">
-            <div className="text-foreground">Loading...</div>
+            <Loader2 className="h-10 w-10 text-primary animate-spin" />
         </div>
     );
   }
