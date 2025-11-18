@@ -78,7 +78,7 @@ export default function LoginPage() {
                   <Gamepad2 className="h-10 w-10 text-primary" style={{filter: 'drop-shadow(0 0 10px hsl(var(--primary)))'}} />
               </div>
               <CardTitle className="text-2xl font-headline">
-                Nope, this is not ready YET!
+                Oh NO...
               </CardTitle>
               <CardDescription>
                 Lets see if you are allowed here 🤔
