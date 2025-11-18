@@ -107,7 +107,7 @@ export default function LoginPage() {
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <Button className="w-full" type="submit">
-                Sign In
+                let me in
               </Button>
             </CardFooter>
           </form>
