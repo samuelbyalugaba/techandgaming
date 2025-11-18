@@ -41,11 +41,14 @@ export default function LoginPage() {
         setError("Authentication service is not available.");
         return;
     }
-    try {
-        initiateEmailSignIn(auth, email, password);
-    } catch (err: any) {
-        setError(err.message || "An unexpected error occurred.");
-    }
+    
+    initiateEmailSignIn(auth, email, password).catch(err => {
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+            setError("Invalid email or password. Please try again.");
+        } else {
+            setError(err.message || "An unexpected error occurred.");
+        }
+    });
   };
   
   if (isUserLoading || user) {
