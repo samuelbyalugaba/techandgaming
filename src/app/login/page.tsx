@@ -106,7 +106,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   />
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && <p className="text-sm text-white">{error}</p>}
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <Button className="w-full" type="submit">
