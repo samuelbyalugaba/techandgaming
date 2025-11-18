@@ -78,7 +78,7 @@ export default function LoginPage() {
                 Nope, this is not ready YET!
               </CardTitle>
               <CardDescription>
-                Enter your credentials to access your account.
+                Lets see if you are allowed here 🤔
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
