@@ -44,7 +44,7 @@ export default function LoginPage() {
     
     initiateEmailSignIn(auth, email, password).catch(err => {
         if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
-            setError("Invalid email or password. Please try again.");
+            setError("Hahahah, I knew you aren't allowed here... Now GET OUT!");
         } else {
             setError(err.message || "An unexpected error occurred.");
         }
